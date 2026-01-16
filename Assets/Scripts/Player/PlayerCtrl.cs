@@ -19,8 +19,8 @@ public class PlayerCtrl : MonoBehaviour
     IdleState _idleState;
     AttackState _attackState;
 
-    
-    
+
+
 
 
     //프로퍼티
@@ -32,7 +32,7 @@ public class PlayerCtrl : MonoBehaviour
     public IdleState IdleState => _idleState;
     public AttackState AttackState => _attackState;
 
-    
+
 
     private void Awake()
     {
@@ -80,7 +80,22 @@ public class PlayerCtrl : MonoBehaviour
         _currentState.Enter(this);
     }
 
-    
+    public void TakeDamage(int damage)
+    {
+        _playerStats.Hp -= damage;
+        Debug.Log(_playerStats.Hp);
+        //if (_playerStats.Hp <= 0)
+        //{
+        //    사망상태
+        //}
+    }
+    public void OnAttackFinished()  // 공격이 끝났을 때만 호출되는 함수
+    {
+        if (_moveInput.sqrMagnitude > 0)
+            ChangeState(_moveState);
+        else
+            ChangeState(_idleState);
+    }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
@@ -110,12 +125,5 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
-    public void OnAttackFinished()  // 공격이 끝났을 때만 호출되는 함수
-    {
-        if (_moveInput.sqrMagnitude > 0)
-            ChangeState(_moveState);
-        else
-            ChangeState(_idleState);
-    }
 
 }

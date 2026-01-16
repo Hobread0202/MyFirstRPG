@@ -1,26 +1,27 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Detectionarea : MonoBehaviour
 {
-    EnemyCtrl _enemy;
+    [SerializeField] string _tag;   //감지할태그 이름
 
-    private void Awake()
-    {
-        _enemy = GetComponentInParent<EnemyCtrl>();
-    }
+    public event Action<Collider> OnTargetEnter;
+    public event Action<Collider> OnTargetExit;
+        
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(_tag))
         {
-            _enemy.ChangeState(_enemy.EnemyMoveState);
+            OnTargetEnter?.Invoke(other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(_tag))
         {
-            _enemy.ChangeState(_enemy.EnemyIdleState);
+            OnTargetExit?.Invoke(other);
         }
     }
 }

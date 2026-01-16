@@ -1,18 +1,17 @@
 
 public class EnemyMoveState : IState<EnemyCtrl>
-{
-    EnemyCtrl _enemy;
-    public void Enter(EnemyCtrl Parameter)
+{    
+    public void Enter(EnemyCtrl enemy)
     {
         
     }
 
-    public void Execute(EnemyCtrl Parameter)
+    public void Execute(EnemyCtrl enemy)
     {
-        _enemy.Nav.SetDestination(_enemy.Target.position);
+        enemy.Nav.SetDestination(enemy.Target.position);
     }
 
-    public void Exit(EnemyCtrl Parameter)
+    public void Exit(EnemyCtrl enemy)
     {
         
     }

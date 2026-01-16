@@ -3,9 +3,13 @@ using UnityEngine.AI;
 
 public class EnemyCtrl : MonoBehaviour
 {
-    [SerializeField] Transform _target; //타겟
+    [SerializeField] EnemyStats _enemyStats;
 
-    BoxCollider _boxCol;   //탐지용
+    [SerializeField] Transform _target; //타겟
+    [SerializeField] Transform _spawnArea; //돌아갈 스폰지점
+
+    [SerializeField] Detectionarea _detectionArea;  //탐지할구역
+
     CapsuleCollider _capCol; //판정용
     NavMeshAgent _nav; //길찾기
     Material _mat;  //색변환용
@@ -20,19 +24,31 @@ public class EnemyCtrl : MonoBehaviour
     public EnemyIdleState EnemyIdleState => _enemyIdleState;
     public NavMeshAgent Nav => _nav;
     public Transform Target => _target;
+    public Transform SpawnArea => _spawnArea;
 
     private void Awake()
     {
-        _boxCol = GetComponent<BoxCollider>();
+
+        //컴포넌트 가져오기
         _capCol = GetComponent<CapsuleCollider>();
         _nav = GetComponent<NavMeshAgent>();
         _mat = GetComponent<Material>();
 
+        //상태생성
         _enemyMoveState = new EnemyMoveState();
         _enemyIdleState = new EnemyIdleState();
 
+        //상태초기화
         _currentState = _enemyIdleState;
         _currentState.Enter(this);
+
+        //이벤트 구독
+        _detectionArea.OnTargetEnter += FollowPlayer;
+        _detectionArea.OnTargetExit += RetrunArea;
+    }
+    private void Start()
+    {
+        _nav.speed = _enemyStats._speed;
     }
 
     private void Update()
@@ -40,6 +56,11 @@ public class EnemyCtrl : MonoBehaviour
         _currentState.Execute(this);
     }
 
+    private void OnDestroy()
+    {
+        _detectionArea.OnTargetEnter -= FollowPlayer;
+        _detectionArea.OnTargetExit -= RetrunArea;
+    }
 
     public void ChangeState(IState<EnemyCtrl> newState)
     {
@@ -49,5 +70,31 @@ public class EnemyCtrl : MonoBehaviour
         _currentState = newState;
         _currentState.Enter(this);
     }
-    
+
+    void FollowPlayer(Collider player)
+    {
+        ChangeState(_enemyMoveState);
+    }
+
+    void RetrunArea(Collider player)
+    {
+        ChangeState(_enemyIdleState);
+    }
+
+    private void TakeDamage(Collider player)
+    {
+        
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (other.TryGetComponent<PlayerCtrl>(out PlayerCtrl player))
+            {
+                player.TakeDamage(_enemyStats._damage);
+            }
+        }
+    }
 }
