@@ -4,11 +4,14 @@ using UnityEngine.InputSystem;
 public class PlayerCtrl : MonoBehaviour
 {
     [SerializeField] PlayerStats _playerStats;
+    [SerializeField] Detectionarea[] _hitBox;
     Animator _anima;
     CharacterController _chaCtrl;
     Vector2 _moveInput;
 
     public float Gravity;   //중력
+    int _currentHp;
+    int _currentDamage;
     bool _isCombo = false;
 
 
@@ -31,6 +34,7 @@ public class PlayerCtrl : MonoBehaviour
     public MoveState MoveState => _moveState;
     public IdleState IdleState => _idleState;
     public AttackState AttackState => _attackState;
+    public Detectionarea[] HitBox => _hitBox;
 
 
 
@@ -46,6 +50,17 @@ public class PlayerCtrl : MonoBehaviour
         _currentState.Enter(this);
 
 
+        //히트박스 배열이벤트 등록
+        foreach (var hitBox in _hitBox)
+        {
+            hitBox.OnTargetEnter += HitDamage;
+        }
+    }
+
+    private void Start()
+    {
+        _currentHp = PlayerStats.Hp;
+        _currentDamage = PlayerStats.Damage;
     }
 
     private void Update()
@@ -70,6 +85,14 @@ public class PlayerCtrl : MonoBehaviour
         //{ player.Gravity += Physics.gravity.y * Time.deltaTime; }
     }
 
+    private void OnDestroy()
+    {
+        foreach (var hitBox in _hitBox)
+        {
+            hitBox.OnTargetEnter -= HitDamage;
+        }
+    }
+
 
     public void ChangeState(IState<PlayerCtrl> newState)
     {
@@ -82,7 +105,7 @@ public class PlayerCtrl : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        _playerStats.Hp -= damage;
+        _currentHp = _playerStats.Hp - damage;
         Debug.Log(_playerStats.Hp);
         //if (_playerStats.Hp <= 0)
         //{
@@ -109,7 +132,6 @@ public class PlayerCtrl : MonoBehaviour
 
         else
         {
-            _anima.SetFloat("MoveY", 0f);
             ChangeState(_idleState);
         }
     }
@@ -125,5 +147,13 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
+    void HitDamage(Collider enemy)
+    {
+        //체크후 가져오기
+        if (enemy.TryGetComponent<EnemyCtrl>(out EnemyCtrl enemyCtrl))
+        {
+            enemyCtrl.TakeDamage(_currentDamage);
+        }
+    }
 
 }

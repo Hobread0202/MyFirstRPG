@@ -4,4 +4,5 @@ using System;
 {
     public int Hp;
     public float Speed;
+    public int Damage;
 }

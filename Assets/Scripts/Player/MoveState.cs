@@ -1,20 +1,22 @@
 using UnityEngine;
 
 public class MoveState : IState<PlayerCtrl>
-{
+{    
+    float _currentSpeed; //현재속도 계산용 변수
+    float _currentMoveY; //애니메이션 파라미터값
     public void Enter(PlayerCtrl player)
     {
-        
+        //진행중이던 파라미터값 받아오기
+        _currentMoveY = player.Anima.GetFloat("MoveY");
     }
 
     public void Execute(PlayerCtrl player)
     {
         Vector2 input = player.MoveInput;
         float speed = player.PlayerStats.Speed; //플레이어 기본 이속
-        float currentSpeed; //현재속도 계산용 변수
 
-
-        player.Anima.SetFloat("MoveY", input.y);
+        _currentMoveY = Mathf.Lerp(_currentMoveY, input.y, Time.deltaTime * 5f);        
+        player.Anima.SetFloat("MoveY", _currentMoveY);
 
         //회전 로직
         if (input.x != 0)
@@ -25,13 +27,13 @@ public class MoveState : IState<PlayerCtrl>
 
 
         //뒤로가는중이면 속도 50%감소
-        if (input.y < 0) { currentSpeed = speed * 0.5f; }
+        if (input.y < 0) { _currentSpeed = speed * 0.5f; }
 
         //아니면 그대로 진행
-        else { currentSpeed = speed; }
+        else { _currentSpeed = speed; }
 
         //이동값 계산
-        Vector3 moveDir = player.transform.forward * input.y * currentSpeed;
+        Vector3 moveDir = player.transform.forward * input.y * _currentSpeed;
 
         //중력값 덮어쓰기
         moveDir.y = player.Gravity;
@@ -44,7 +46,5 @@ public class MoveState : IState<PlayerCtrl>
 
     public void Exit(PlayerCtrl player)
     {
-        //상태 나갈때 초기화
-        player.Anima.SetFloat("MoveY", 0);
     }
 }
