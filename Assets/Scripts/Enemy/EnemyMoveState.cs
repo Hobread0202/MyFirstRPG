@@ -1,6 +1,7 @@
 
 public class EnemyMoveState : IState<EnemyCtrl>
 {    
+
     public void Enter(EnemyCtrl enemy)
     {
         
@@ -8,7 +9,13 @@ public class EnemyMoveState : IState<EnemyCtrl>
 
     public void Execute(EnemyCtrl enemy)
     {
-        enemy.Nav.SetDestination(enemy.Target.position);
+        if (enemy.Nav.gameObject.activeInHierarchy && enemy.Nav.enabled && enemy.Nav.isOnNavMesh)
+        {
+            if (enemy.Target != null)
+            {
+                enemy.Nav.SetDestination(enemy.Target.position);
+            }
+        }
     }
 
     public void Exit(EnemyCtrl enemy)

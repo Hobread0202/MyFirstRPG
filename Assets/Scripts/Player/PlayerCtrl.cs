@@ -27,6 +27,7 @@ public class PlayerCtrl : MonoBehaviour
 
 
     //프로퍼티
+    public Transform PlayerTransform => transform;
     public Vector2 MoveInput => _moveInput;
     public CharacterController ChaCtrl => _chaCtrl;
     public PlayerStats PlayerStats => _playerStats;

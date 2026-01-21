@@ -1274,11 +1274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd7518b4cc4bad4dbaf3d154a384ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyStats:
-    _speed: 1
-    _damage: 10
-  _target: {fileID: 0}
-  _spawnArea: {fileID: 0}
+  _enemyStats: {fileID: 11400000, guid: 7381d96c5929b084b855732a9b6569d0, type: 2}
+  _angularSpeed: 200
   _detectionArea: {fileID: 2499284340131281580}
 --- !u!195 &2392070125233048144
 NavMeshAgent:
@@ -1287,7 +1284,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9055015372725924733}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 0.9
