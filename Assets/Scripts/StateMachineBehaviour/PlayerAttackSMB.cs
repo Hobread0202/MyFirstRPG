@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AttackReset : StateMachineBehaviour
+public class PlayerAttackSMB : StateMachineBehaviour
 {
     [SerializeField] string _triggerName;
 

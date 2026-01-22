@@ -4,7 +4,7 @@ public class EnemyMoveState : IState<EnemyCtrl>
 
     public void Enter(EnemyCtrl enemy)
     {
-        
+        enemy.EnableAllColliders();
     }
 
     public void Execute(EnemyCtrl enemy)

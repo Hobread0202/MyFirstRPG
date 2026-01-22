@@ -3,6 +3,7 @@ public class EnemyIdleState : IState<EnemyCtrl>
     public void Enter(EnemyCtrl enemy)
     {
         //idle모션으로 전환
+        enemy.EnableAllColliders();
     }
 
     public void Execute(EnemyCtrl enemy)

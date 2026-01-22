@@ -3,6 +3,7 @@ public class EnemyDeadState : IState<EnemyCtrl>
     public void Enter(EnemyCtrl enemy)
     {
         enemy.Anima.SetTrigger("Dead");
+        enemy.DisableAllColliders();
     }
 
     public void Execute(EnemyCtrl enemy)

@@ -10,7 +10,6 @@ public class PlayerCtrl : MonoBehaviour
     Vector2 _moveInput;
 
     public float Gravity;   //ม฿ทย
-    int _currentHp;
     int _currentDamage;
     bool _isCombo = false;
 
@@ -60,7 +59,6 @@ public class PlayerCtrl : MonoBehaviour
 
     private void Start()
     {
-        _currentHp = PlayerStats.Hp;
         _currentDamage = PlayerStats.Damage;
     }
 
@@ -106,7 +104,7 @@ public class PlayerCtrl : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        _currentHp = _playerStats.Hp - damage;
+        _playerStats.Hp -= damage;
         Debug.Log(_playerStats.Hp);
         //if (_playerStats.Hp <= 0)
         //{
@@ -156,5 +154,4 @@ public class PlayerCtrl : MonoBehaviour
             enemyCtrl.TakeDamage(_currentDamage);
         }
     }
-
 }

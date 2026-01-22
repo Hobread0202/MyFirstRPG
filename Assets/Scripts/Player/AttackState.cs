@@ -10,7 +10,8 @@ public class AttackState : IState<PlayerCtrl>
 
         player.Anima.applyRootMotion = true;
         player.Anima.SetTrigger("Attack");
-        _hitBox[0].enabled = true;
+        _hitBox[0].gameObject.SetActive(true);
+        Debug.Log("히트박스온!");
     }
 
     public void Execute(PlayerCtrl player)
@@ -28,7 +29,7 @@ public class AttackState : IState<PlayerCtrl>
     void DisableAll()   //모든 히트박스 끄기
     {
         foreach (var hitBox in _hitBox)
-            hitBox.enabled = false;
+            hitBox.gameObject.SetActive(false);
     }
 
 }

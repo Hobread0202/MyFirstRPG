@@ -54,7 +54,7 @@ public class EnemyPoolManager : MonoBehaviour
                 actionOnGet: (enemyCtrl) =>
                 {
                     enemyCtrl.gameObject.SetActive(true);
-                    enemyCtrl.OnSpawnFromPool();
+                    //enemyCtrl.OnSpawnFromPool();
                 },
 
                 //넣을때 실행
@@ -94,6 +94,9 @@ public class EnemyPoolManager : MonoBehaviour
         EnemyCtrl enemy = enemyPools[type].Get();
         enemy.transform.position = position;
         enemy.transform.rotation = rotation;
+        enemy.Nav.enabled = true;
+
+        enemy.OnSpawnFromPool();
 
         enemy.SetTarget(_player.PlayerTransform);   //플레이어위치값
         enemy.SetSpawnArea(mySpawnArea);
