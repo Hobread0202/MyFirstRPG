@@ -13,7 +13,7 @@ public class MoveState : IState<PlayerCtrl>
     public void Execute(PlayerCtrl player)
     {
         Vector2 input = player.MoveInput;
-        float speed = player.PlayerStats.Speed; //플레이어 기본 이속
+        float speed = player.PlayerStats.speed; //플레이어 기본 이속
 
         _currentMoveY = Mathf.Lerp(_currentMoveY, input.y, Time.deltaTime * 5f);        
         player.Anima.SetFloat("MoveY", _currentMoveY);

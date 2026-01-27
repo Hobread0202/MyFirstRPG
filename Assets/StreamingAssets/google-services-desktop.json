@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "282693602968",
+    "firebase_url": "https://hodb-ae406-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "hodb-ae406",
+    "storage_bucket": "hodb-ae406.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282693602968:android:98a53b42c3a0c28b480aed",
+        "android_client_info": {
+          "package_name": "com.Ho.firebasetest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALTeZTsSfkCi7OXjgXgjnt5vk6A3LJG0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

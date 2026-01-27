@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    [SerializeField] PlayerStats _playerStats;
+    [SerializeField] PlayerData _playerStats;
     [SerializeField] Detectionarea[] _hitBox;
     Animator _anima;
     CharacterController _chaCtrl;
@@ -11,7 +11,7 @@ public class PlayerCtrl : MonoBehaviour
 
     public float Gravity;   //중력
     int _currentDamage;
-    bool _isCombo = false;
+    //bool _isCombo = false;
 
 
 
@@ -29,7 +29,7 @@ public class PlayerCtrl : MonoBehaviour
     public Transform PlayerTransform => transform;
     public Vector2 MoveInput => _moveInput;
     public CharacterController ChaCtrl => _chaCtrl;
-    public PlayerStats PlayerStats => _playerStats;
+    public PlayerData PlayerStats => _playerStats;
     public Animator Anima => _anima;
     public MoveState MoveState => _moveState;
     public IdleState IdleState => _idleState;
@@ -104,8 +104,8 @@ public class PlayerCtrl : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        _playerStats.Hp -= damage;
-        Debug.Log(_playerStats.Hp);
+        _playerStats.maxHp -= damage;
+        Debug.Log(_playerStats.maxHp);
         //if (_playerStats.Hp <= 0)
         //{
         //    사망상태

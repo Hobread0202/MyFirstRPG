@@ -3393,9 +3393,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c096f33af03901649a704f6fd7ddc4fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerStats:
-    Hp: 100
-    Speed: 3
+  _playerStats: {fileID: 11400000, guid: f5ad41252833e7e4fa514b8450c9d0b1, type: 2}
+  _hitBox: []
   Gravity: 1
 --- !u!143 &2351946827438021472
 CharacterController:
