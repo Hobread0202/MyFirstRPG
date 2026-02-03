@@ -6,4 +6,5 @@ public class PlayerData : ScriptableObject
     public int maxHp;
     public int speed;
     public int Damage;
+    public int maxExp;
 }

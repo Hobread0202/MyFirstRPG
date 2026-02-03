@@ -15,6 +15,10 @@ public class EnemyMoveState : IState<EnemyCtrl>
             {
                 enemy.Nav.SetDestination(enemy.Target.position);
             }
+            else
+            {
+                enemy.ChangeState(enemy.EnemyIdleState);
+            }
         }
     }
 

@@ -10,6 +10,7 @@ public class AttackState : IState<PlayerCtrl>
 
         player.Anima.applyRootMotion = true;
         player.Anima.SetTrigger("Attack");
+        SoundMgr.Instance.PlaySFX("SwordSound");
         _hitBox[0].gameObject.SetActive(true);
         Debug.Log("히트박스온!");
     }

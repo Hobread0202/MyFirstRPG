@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class CamCtrl : MonoBehaviour
 {
     Transform _cameraArm;
+    [SerializeField] PlayerCtrl _player;
 
     [SerializeField] float sensitivity = 100f;  //감도
     [SerializeField] float minY = -80f;
@@ -17,6 +18,11 @@ public class CamCtrl : MonoBehaviour
 
     public void OnCamMove(InputAction.CallbackContext ctx)
     {
+        if (_player.IsDead) return;
+
+        //ESC 누른상태면 리턴
+        if (Cursor.lockState != CursorLockMode.Locked) return;
+
         Vector2 cameraMove = ctx.ReadValue<Vector2>();
 
         //마우스 좌우 이동값

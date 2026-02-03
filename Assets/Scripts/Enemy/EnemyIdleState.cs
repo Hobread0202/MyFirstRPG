@@ -12,8 +12,14 @@ public class EnemyIdleState : IState<EnemyCtrl>
         if (enemy.Nav.gameObject.activeInHierarchy && enemy.Nav.enabled && enemy.Nav.isOnNavMesh)
         {
             //타겟체크
-            if (enemy.Target != null)
+            if (enemy.Target != null && enemy.TargetInDetectionArea())
             {
+                //EnemyMoveState에서 타겟따라가게하고
+                enemy.ChangeState(enemy.EnemyMoveState);
+            }
+            else
+            {
+                //타겟이 없으면 스폰 위치로 이동
                 enemy.Nav.SetDestination(enemy.SpawnArea.position);
             }
         }

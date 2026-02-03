@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Detectionarea : MonoBehaviour
@@ -8,7 +9,10 @@ public class Detectionarea : MonoBehaviour
     public event Action<Collider> OnTargetEnter;
     public event Action<Collider> OnTargetStay;
     public event Action<Collider> OnTargetExit;
-        
+
+    //중복안되게 해쉬셋 목록
+    private HashSet<Collider> _insideTargets = new HashSet<Collider>();
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(_tag))
@@ -30,5 +34,11 @@ public class Detectionarea : MonoBehaviour
         {
             OnTargetExit?.Invoke(other);
         }
+    }
+
+    public bool IsColliderInside(Collider col)
+    {
+        //해쉬목록에 콜라이더있는지 체크
+        return _insideTargets.Contains(col);
     }
 }

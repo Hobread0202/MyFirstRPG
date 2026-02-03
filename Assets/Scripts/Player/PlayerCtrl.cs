@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -11,6 +13,11 @@ public class PlayerCtrl : MonoBehaviour
 
     public float Gravity;   //중력
     int _currentDamage;
+    int _currentHp;
+    int _currentExp;
+    int _currentLevel;
+    bool _isDead;
+
     //bool _isCombo = false;
 
 
@@ -22,7 +29,10 @@ public class PlayerCtrl : MonoBehaviour
     AttackState _attackState;
 
 
-
+    public event Action<float, float> OnHpChanged;
+    public event Action OnDead;
+    public event Action<int> OnLevelChanged;
+    public event Action<float, float> OnExpChanged;
 
 
     //프로퍼티
@@ -36,6 +46,10 @@ public class PlayerCtrl : MonoBehaviour
     public AttackState AttackState => _attackState;
     public Detectionarea[] HitBox => _hitBox;
 
+    public bool IsDead => _isDead;
+    public int CurrentLevel => _currentLevel;
+    public int CurrentExp => _currentExp;
+
 
 
     private void Awake()
@@ -46,24 +60,38 @@ public class PlayerCtrl : MonoBehaviour
         _moveState = new MoveState();
         _idleState = new IdleState();
         _attackState = new AttackState();
-        _currentState = _idleState;
-        _currentState.Enter(this);
-
-
-        //히트박스 배열이벤트 등록
-        foreach (var hitBox in _hitBox)
-        {
-            hitBox.OnTargetEnter += HitDamage;
-        }
+        
     }
 
     private void Start()
     {
+        //데이터 불러오기
+        SaveData data = FirebaseDBMgr.Instance.LoadedData;
+
+        //값셋팅
         _currentDamage = PlayerStats.Damage;
+
+        //세이브데이터
+        _currentHp = data.currentHp;
+        _currentExp = data.currentExp;
+        _currentLevel = data.currentLevel;
+
+        OnHpChanged?.Invoke(_currentHp, _playerStats.maxHp);
+        OnExpChanged?.Invoke(_currentExp, _playerStats.maxExp);
+        OnLevelChanged?.Invoke(_currentLevel);
+
+        Debug.Log($"시작할 때 체력: {_currentHp}");
+        Debug.Log($"시작할 때 경치: {_currentExp}");
+
+        _chaCtrl.enabled = false;
+        transform.position = data.lastPos;
+        _chaCtrl.enabled = true;
     }
 
     private void Update()
     {
+        if (_isDead) return;
+
         _currentState.Execute(this);
 
         if (_chaCtrl.isGrounded && Gravity < 0)
@@ -83,13 +111,27 @@ public class PlayerCtrl : MonoBehaviour
         ////공중이면 y축 중력가하기
         //{ player.Gravity += Physics.gravity.y * Time.deltaTime; }
     }
-
-    private void OnDestroy()
+    private void OnEnable()
     {
+        _currentState = _idleState;
+        _currentState.Enter(this);
+
+        //히트박스 배열이벤트 등록
+        foreach (var hitBox in _hitBox)
+        {
+            hitBox.OnTargetEnter += HitDamage;
+        }
+
+    }
+
+    private void OnDisable()
+    {
+
         foreach (var hitBox in _hitBox)
         {
             hitBox.OnTargetEnter -= HitDamage;
         }
+
     }
 
 
@@ -104,12 +146,43 @@ public class PlayerCtrl : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        _playerStats.maxHp -= damage;
-        Debug.Log(_playerStats.maxHp);
-        //if (_playerStats.Hp <= 0)
-        //{
-        //    사망상태
-        //}
+        if (_isDead) return;
+
+        _currentHp -= damage;
+        Debug.Log(_currentHp);
+
+        OnHpChanged?.Invoke(_currentHp, _playerStats.maxHp);
+
+        if (_currentHp <= 0)
+        {
+            _isDead = true;
+            _anima.SetTrigger("Die");
+            OnDead?.Invoke();
+        }
+    }
+
+    public void ExpUp()
+    {
+        _currentExp += 10;
+
+        //UI에게 알림 보내기
+        OnExpChanged?.Invoke(_currentExp, _playerStats.maxExp);
+
+        if (_currentExp >= _playerStats.maxExp)
+        {
+            LevelUp();
+        }
+    }
+
+    public void LevelUp()
+    {
+        _playerStats.maxExp += 100;
+        _currentExp = 0;
+        _currentLevel++;
+
+        //UI에게 알림 보내기
+        OnLevelChanged?.Invoke(_currentLevel);
+        OnExpChanged?.Invoke(_currentExp, _playerStats.maxExp);
     }
     public void OnAttackFinished()  // 공격이 끝났을 때만 호출되는 함수
     {
@@ -139,6 +212,9 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (ctx.performed)
         {
+            //커서켜져있으면 공격 불가
+            if (Cursor.visible) return;
+
             if (_currentState != _attackState)
             {
                 ChangeState(_attackState);
@@ -151,7 +227,38 @@ public class PlayerCtrl : MonoBehaviour
         //체크후 가져오기
         if (enemy.TryGetComponent<EnemyCtrl>(out EnemyCtrl enemyCtrl))
         {
-            enemyCtrl.TakeDamage(_currentDamage);
+            //반환된 불값 저장
+            bool kill = enemyCtrl.TakeDamage(_currentDamage, gameObject.transform.position);
+
+            //죽였으면 실행
+            if (kill)
+            {
+                ExpUp();
+            }
         }
+    }
+
+    //현재 데이터 반환함수
+    public SaveData GetCurrentSaveData()
+    {
+        SaveData data = new SaveData();
+        data.lastSceneName = SceneManager.GetActiveScene().name;
+        data.lastX = transform.position.x;
+        data.lastY = transform.position.y;
+        data.lastZ = transform.position.z;
+        data.currentHp = _currentHp;
+        data.currentExp = _currentExp;
+        data.currentLevel = _currentLevel;
+
+        return data;
+    }
+
+    public void ResetPlayer(int hp)
+    {
+        _currentHp = hp;
+        _isDead = false;
+        _anima.Rebind();
+        _chaCtrl.enabled = true;
+        OnHpChanged?.Invoke(_currentHp, _playerStats.maxHp);
     }
 }
